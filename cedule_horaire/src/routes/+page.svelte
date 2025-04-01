@@ -1,26 +1,25 @@
 <!-- Icons -->
 <script lang="ts">
 	import { onMount, type Component } from 'svelte';
-	import { TrainingDB } from '$lib/domain/db/indexed-db-manager';
+	import { IndexedDBManager } from '$lib/domain/db/indexed-db-manager';
 	import Cedule from '$lib/components/Cedule.svelte';
 	import NouveauEtudiant from '$lib/components/NouveauEtudiant.svelte';
 	import NouvelleMachine from '$lib/components/NouvelleMachine.svelte';
 	import ListerMachines from '$lib/components/ListerMachines.svelte';
 	import ListerEtudiants from '$lib/components/ListerEtudiants.svelte';
 	import { Controller } from '$lib/domain/controller';
-	import { GlobalStoreEnum } from '$lib/domain/global-store-functions';
 
-	let selectedComponent:Component = Cedule;
-	let controller:Controller;
+	let selectedComponent: Component = Cedule;
+	let controller: Controller;
 
 	onMount(() => {
-		let tb = new TrainingDB();
+		let tb = new IndexedDBManager();
 		tb.initialize();
 		controller = Controller.getInstance();
-		controller.globalStore.set("SWITCH_COMPONENT", switchComponent);
+		controller.globalStore.set('SWITCH_COMPONENT', switchComponent);
 	});
 
-	function switchComponent(component:Component) {
+	function switchComponent(component: Component) {
 		selectedComponent = component;
 	}
 </script>
@@ -72,8 +71,8 @@
 							href="#0"
 							class="nav-link"
 							class:active={selectedComponent === Cedule}
-							on:click|preventDefault={() => (switchComponent(Cedule))}
-							on:keydown|preventDefault={(e) => e.key === 'Enter' && (switchComponent(Cedule))}
+							on:click|preventDefault={() => switchComponent(Cedule)}
+							on:keydown|preventDefault={(e) => e.key === 'Enter' && switchComponent(Cedule)}
 							role="button"
 							tabindex="0"
 						>
@@ -84,10 +83,11 @@
 						<a
 							href="#0"
 							class="nav-link"
-							class:active={selectedComponent === ListerMachines || selectedComponent === NouvelleMachine}
-							on:click|preventDefault={() => (switchComponent(ListerMachines))}
+							class:active={selectedComponent === ListerMachines ||
+								selectedComponent === NouvelleMachine}
+							on:click|preventDefault={() => switchComponent(ListerMachines)}
 							on:keydown|preventDefault={(e) =>
-								e.key === 'Enter' && (switchComponent(ListerMachines))}
+								e.key === 'Enter' && switchComponent(ListerMachines)}
 							role="button"
 							tabindex="0"
 						>
@@ -98,10 +98,11 @@
 						<a
 							href="#0"
 							class="nav-link"
-							class:active={selectedComponent === ListerEtudiants || selectedComponent === NouveauEtudiant}
-							on:click|preventDefault={() => (switchComponent(ListerEtudiants))}
+							class:active={selectedComponent === ListerEtudiants ||
+								selectedComponent === NouveauEtudiant}
+							on:click|preventDefault={() => switchComponent(ListerEtudiants)}
 							on:keydown|preventDefault={(e) =>
-								e.key === 'Enter' && (switchComponent(ListerEtudiants))}
+								e.key === 'Enter' && switchComponent(ListerEtudiants)}
 							role="button"
 							tabindex="0"
 						>

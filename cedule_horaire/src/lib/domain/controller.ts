@@ -1,4 +1,5 @@
-import { GlobalStoreEnum } from "./global-store-functions";
+import { IndexedDBManager } from '$lib/domain/db/indexed-db-manager';
+import type { DatabaseSchema } from '$lib/domain/db/db-schema';
 
 export class Controller {
     // Singleton class attributes and methods
@@ -17,8 +18,14 @@ export class Controller {
         }
     }
 
-    nouveauEtudiant() {
-        
+    // Attributs
+    idbManager = new IndexedDBManager();
+
+    // Méthodes
+    nouveauEtudiant(student:Omit<DatabaseSchema["students"]["value"], "id">) {
+        this.idbManager.addStudent(
+            student
+        )
     }
 
 }

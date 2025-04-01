@@ -12,7 +12,6 @@
 <script lang="ts">
 	import { Controller } from "$lib/domain/controller";
 	import NouveauEtudiant from '$lib/components/NouveauEtudiant.svelte';
-	import { GlobalStoreEnum } from "$lib/domain/global-store-functions";
 	import { onMount } from "svelte";
 
 	let controller:Controller;
@@ -24,10 +23,8 @@
 	function switchtoNouveauEtudiant() {
 		const switchFunc = controller.globalStore.get("SWITCH_COMPONENT");
 		if (switchFunc) {
-			console.log(switchFunc)
 			switchFunc(NouveauEtudiant);
 		}
-		// switchFunc(NouveauEtudiant);
 	}
 
 

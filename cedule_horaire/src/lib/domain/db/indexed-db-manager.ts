@@ -5,7 +5,7 @@ import { ProgramType } from '$lib/domain/enums';
 import type { Machine, Program, ProgramConstraints  } from '$lib/domain/interfaces'
 import type { DatabaseSchema } from '$lib/domain/db/db-schema'
 
-export class TrainingDB {
+export class IndexedDBManager {
   private db: IDBPDatabase<DatabaseSchema> | null = null;
 
   async initialize() {
