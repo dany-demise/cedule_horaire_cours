@@ -1,0 +1,54 @@
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="row px-5" style="width: 100%;">
+      <div class="col p-4">
+        <h2 class="card-title text-center mb-4">Nouvel étudiant</h2>
+        
+        <form id="new-student-form">
+          <div class="mb-3">
+            <label for="firstName" class="form-label">Prénom</label>
+            <input
+              type="text"
+              class="form-control"
+              id="firstName"
+              name="firstName"
+              required
+            />
+          </div>
+  
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Nom</label>
+            <input
+              type="text"
+              class="form-control"
+              id="lastName"
+              name="lastName"
+              required
+            />
+          </div>
+  
+          <div class="mb-3">
+            <label for="startDate" class="form-label">Date de début</label>
+            <input
+              type="date"
+              class="form-control"
+              id="startDate"
+              name="startDate"
+              required
+            />
+          </div>
+  
+          <div class="my-4">
+            <label for="program" class="form-label">Programme</label>
+            <select id="program" name="programId" class="form-select">
+              <option value="">No program</option>
+              <!-- Program options would go here -->
+            </select>
+          </div>
+  
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary">Add Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
