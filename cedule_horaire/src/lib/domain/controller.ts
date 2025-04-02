@@ -20,12 +20,19 @@ export class Controller {
 
     // Attributs
     idbManager = new IndexedDBManager();
+    initDbManager = async () => { await this.idbManager.initialize(); }
 
     // Méthodes
-    nouveauEtudiant(student:Omit<DatabaseSchema["students"]["value"], "id">) {
+    nouveauEtudiant(student: Omit<DatabaseSchema["students"]["value"], "id">) {
+        console.log(student)
         this.idbManager.addStudent(
             student
         )
+        console.log("ok");
+    }
+
+    async getAllEtudiants() {
+        return await this.idbManager.getAllStudents();
     }
 
 }

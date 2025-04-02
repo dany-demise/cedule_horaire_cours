@@ -2,7 +2,7 @@
 import { openDB, } from 'idb';
 import type { DBSchema, IDBPDatabase } from 'idb'
 import { ProgramType } from '$lib/domain/enums';
-import type { Machine, Program, ProgramConstraints  } from '$lib/domain/interfaces'
+import type { Machine, Program, ProgramConstraints } from '$lib/domain/interfaces'
 import type { DatabaseSchema } from '$lib/domain/db/db-schema'
 
 export class IndexedDBManager {
@@ -34,9 +34,9 @@ export class IndexedDBManager {
       },
     });
 
-    // await this.seedInitialData();
+    await this.seedInitialData();
     console.log(
-        await this.getMachineByType('Loader')
+      await this.getMachineByType('Loader')
     )
   }
 
@@ -70,8 +70,8 @@ export class IndexedDBManager {
 
     const tx = this.db!.transaction(['machines', 'programs'], 'readwrite');
     await Promise.all([
-       ...initialMachines.map(machine => tx.objectStore('machines').add(machine)),
-    //   tx.objectStore('programs').add(initialProgram)
+      ...initialMachines.map(machine => tx.objectStore('machines').add(machine)),
+      tx.objectStore('programs').add(initialProgram)
     ]);
     await tx.done;
   }
@@ -87,14 +87,17 @@ export class IndexedDBManager {
 
   // Student operations
   async addStudent(student: Omit<DatabaseSchema['students']['value'], 'id'>) {
-    return this.db!.add('students', student);
+    const tx = this.db!.transaction(['students'], 'readwrite');
+    tx.objectStore('students').add(student)
+    await tx.done;
+    // return this.db!.add('students', student);
   }
 
   async assignStudentToProgram(studentId: number, programId: number) {
     const tx = this.db!.transaction('students', 'readwrite');
     const student = await tx.store.get(studentId);
     if (!student) throw new Error('Student not found');
-    
+
     student.programId = programId;
     await tx.store.put(student);
     await tx.done;
@@ -103,6 +106,15 @@ export class IndexedDBManager {
   // Machine operations
   async getMachineByType(type: string) {
     return this.db!.getAllFromIndex('machines', 'by-type', type);
+  }
+
+  // Student operations
+  async getAllStudents() {
+    return this.db!.getAll('students');
+  }
+
+  async getStudentsByProgram(programId: number) {
+    return this.db!.getAllFromIndex('students', 'by-program', programId);
   }
 
   // Schedule generation with constraints

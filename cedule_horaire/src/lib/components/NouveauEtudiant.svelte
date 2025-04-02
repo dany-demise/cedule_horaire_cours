@@ -1,8 +1,24 @@
 <script lang="ts">
-	function addStudent() {
+	import { Controller } from "$lib/domain/controller";
+	import { onMount } from "svelte";
+  import ListerEtudiants from "$lib/components/ListerEtudiants.svelte";
+
+  let controller:Controller;
+
+  onMount(() => {
+    controller = Controller.getInstance();
+  });
+
+	function addEtudiant() {
 		const etudiantForm = getEtudiantForm();
-    
+    controller.nouveauEtudiant(etudiantForm);
+    // Retourner a ListerEtudiants
+    const switchFunc = controller.globalStore.get("SWITCH_COMPONENT")
+    if (switchFunc) {
+      switchFunc(ListerEtudiants);
+    }
 	}
+
 	function getEtudiantForm() {
 		const form = document.getElementById('new-student-form') as HTMLFormElement;
 		return {
@@ -44,7 +60,7 @@
 				</div>
 
 				<div class="d-grid text-center">
-					<button type="submit" class="btn btn-outline-dark px-5" on:click={addStudent}
+					<button type="submit" class="btn btn-outline-dark px-5" on:click={addEtudiant}
 						>Add Student</button
 					>
 				</div>

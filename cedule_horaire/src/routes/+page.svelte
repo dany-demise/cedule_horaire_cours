@@ -13,10 +13,9 @@
 	let controller: Controller;
 
 	onMount(() => {
-		let tb = new IndexedDBManager();
-		tb.initialize();
 		controller = Controller.getInstance();
 		controller.globalStore.set('SWITCH_COMPONENT', switchComponent);
+		controller.initDbManager();
 	});
 
 	function switchComponent(component: Component) {
