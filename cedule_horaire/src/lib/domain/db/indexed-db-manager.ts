@@ -39,7 +39,6 @@ export class IndexedDBManager {
       await this.getMachineByType('Loader')
     )
   }
-
   private async seedInitialData() {
     // Initial machines
     const initialMachines = [
@@ -50,29 +49,79 @@ export class IndexedDBManager {
       { type: 'Niveleuse', baseDuration: 2, colorCode: '#FF33F3' }
     ];
 
-    // Initial program
-    const initialProgram = {
+    // Initial program data (without ID)
+    const initialProgramData: Omit<DatabaseSchema["programs"]["value"], "id"> = {
       name: '5-Machine 13-Week Program',
-      durationWeeks: 13,
       machineSequence: [
-        { type: 'Pelle', weeks: 4, order: 1 },
-        { type: 'Pépine', weeks: 3, order: 2 },
-        { type: 'Bull', weeks: 3, order: 3 },
-        { type: 'Niveleuse', weeks: 2, order: 4 },
-        { type: 'Loader', weeks: 1, order: 5 }
+        { machine: { type: 'Pelle', weeks: 4, order: 1 }, durationWeeks: 3 },
+        { machine: { type: 'Pépine', weeks: 3, order: 2 }, durationWeeks: 3 },
+        { machine: { type: 'Bull', weeks: 3, order: 3 }, durationWeeks: 3 },
+        { machine: { type: 'Niveleuse', weeks: 2, order: 4 }, durationWeeks: 3 },
+        { machine: { type: 'Loader', weeks: 1, order: 5 }, durationWeeks: 3 }
       ],
-      constraints: {
-        allowConsecutive: false,
-        allowGaps: false,
-        programType: ProgramType.LONG
-      }
+      programType: ProgramType.LONG
     };
 
-    const tx = this.db!.transaction(['machines', 'programs'], 'readwrite');
-    await Promise.all([
-      ...initialMachines.map(machine => tx.objectStore('machines').add(machine)),
-      tx.objectStore('programs').add(initialProgram)
-    ]);
+    // Initial students
+    const initialStudents = [
+      {
+        firstName: 'John',
+        lastName: 'Doe',
+        startDate: new Date('2023-01-15')
+      },
+      {
+        firstName: 'Jane',
+        lastName: 'Smith',
+        startDate: new Date('2023-02-01')
+      },
+      {
+        firstName: 'Robert',
+        lastName: 'Johnson',
+        startDate: new Date('2023-03-10')
+      },
+      {
+        firstName: 'Emily',
+        lastName: 'Williams',
+        startDate: new Date('2023-01-30')
+      },
+      {
+        firstName: 'Michael',
+        lastName: 'Brown',
+        startDate: new Date('2023-02-15')
+      }
+    ];
+
+    const tx = this.db!.transaction(['machines', 'programs', 'students'], 'readwrite');
+
+    // Add machines
+    const machinePromises = initialMachines.map(machine => tx.objectStore('machines').add(machine));
+    await Promise.all(machinePromises);
+
+    // Add program and get its ID
+    const programId = await tx.objectStore('programs').add(initialProgramData);
+
+    // Get the full program with ID to add to students
+    const program = await tx.objectStore('programs').get(programId);
+    if (!program) throw new Error('Failed to create program');
+
+    // Prepare the single program for students
+    const studentProgram: Program = {
+      // id: program.id!,
+      name: program.name,
+      programType: program.programType,
+      machineSequence: program.machineSequence
+    };
+
+    // Add students with the single program in their programme array
+    const studentPromises = initialStudents.map(student =>
+      tx.objectStore('students').add({
+        ...student,
+        programme: [studentProgram], // Exactly one program in the array
+        programId: program.id // Reference to the same program
+      })
+    );
+
+    await Promise.all(studentPromises);
     await tx.done;
   }
 
@@ -83,6 +132,11 @@ export class IndexedDBManager {
 
   async getProgramByName(name: string) {
     return this.db!.getFromIndex('programs', 'by-name', name);
+  }
+
+  // Student operations
+  async getAllProgrammes() {
+    return this.db!.getAll('programs');
   }
 
   // Student operations
@@ -117,40 +171,5 @@ export class IndexedDBManager {
     return this.db!.getAllFromIndex('students', 'by-program', programId);
   }
 
-  // Schedule generation with constraints
-  async generateStudentSchedule(studentId: number) {
-    const student = await this.db!.get('students', studentId);
-    if (!student?.programId) throw new Error('Student not enrolled');
-
-    const program = await this.db!.get('programs', student.programId);
-    if (!program) throw new Error('Program not found');
-
-    const schedule: Program[] = [];
-    let currentWeek = 0;
-
-    for (const machine of program.machineSequence) {
-      const machineData = await this.getMachineByType(machine.type);
-      if (!machineData) throw new Error(`Machine type ${machine.type} not found`);
-
-      schedule.push({
-        machineType: machine.type,
-        startWeek: currentWeek + 1,
-        endWeek: currentWeek + machine.weeks
-      });
-
-      currentWeek += machine.weeks;
-    }
-
-    // Validate constraints
-    if (program.constraints.programType === ProgramType.LONG) {
-      for (let i = 1; i < schedule.length; i++) {
-        if (schedule[i].machineType === schedule[i - 1].machineType) {
-          throw new Error('Consecutive machines detected in long program');
-        }
-      }
-    }
-
-    return schedule;
-  }
 }
 

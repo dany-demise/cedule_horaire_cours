@@ -13,7 +13,7 @@ export interface ProgramConstraints {
 }
 
 export interface Program {
-  machineType: string;
-  startWeek: number;
-  endWeek: number;
+  name: string,
+  programType: ProgramType,
+  machineSequence: {machine: Machine, durationWeeks:number}[]
 }

@@ -19,6 +19,7 @@
 
 	async function insertAllStudents() {
 		const students = await controller.getAllEtudiants();
+		console.log(students);
 		const tbody = document.getElementById('students-table-body') as HTMLTableElement;
 
 		if (tbody && students) {
@@ -26,11 +27,13 @@
 
 			students.forEach((student) => {
 				const row = document.createElement('tr');
+				let programs = '';
+				for (let p of student.programme) { programs += p.name }
 				row.innerHTML = `
 					<td>${student.id}</td>
 					<td>${student.firstName}</td>
 					<td>${student.lastName}</td>
-					<td>${student.programme || '-'}</td>
+					<td>${programs}</td>
 					<td>${student.startDate}</td>
 				`;
 				tbody.appendChild(row);
@@ -52,7 +55,7 @@
 	</div>
 </div>
 
-<div class="table-responsive mt-4 px-5">
+<div class="table-responsive mt-4">
 	<table class="table table-striped table-hover">
 		<thead class="thead-light">
 			<tr>

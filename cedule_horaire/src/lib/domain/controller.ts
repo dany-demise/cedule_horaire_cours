@@ -35,4 +35,8 @@ export class Controller {
         return await this.idbManager.getAllStudents();
     }
 
+    async getAllProgrammes() {
+        return await this.idbManager.getAllProgrammes();
+    }
+
 }

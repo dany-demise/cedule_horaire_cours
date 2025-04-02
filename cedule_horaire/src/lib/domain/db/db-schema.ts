@@ -1,46 +1,49 @@
 
 import type { DBSchema } from 'idb'
-import type { Machine, Program, ProgramConstraints  } from '$lib/domain/interfaces'
+import type { Machine, Program, ProgramConstraints } from '$lib/domain/interfaces'
+import type { ProgramType } from '$lib/domain/enums';
 
 
 export interface DatabaseSchema extends DBSchema {
-    programs: {
-      key: number;
-      value: {
-        id?: number;
-        name: string;
-        durationWeeks: number;
-        machineSequence: Machine[];
-        constraints: ProgramConstraints;
-      };
-      indexes: {
-        'by-name': string;
-      };
+  programs: {
+    key: number;
+    value: {
+      id?: number;
+      name: string;
+      machineSequence: {
+        machine: Machine;
+        durationWeeks: number;  // Duration specific to this program-machine pairing
+      }[];
+      programType: ProgramType;
     };
-    students: {
-      key: number;
-      value: {
-        id?: number;
-        firstName: string;
-        lastName: string;
-        programId?: number;
-        startDate: Date;
-        programme: Program[];
-      };
-      indexes: {
-        'by-program': number;
-      };
+    indexes: {
+      'by-name': string;
     };
-    machines: {
-      key: number;
-      value: {
-        id?: number;
-        type: string;
-        baseDuration: number;
-        colorCode: string;
-      };
-      indexes: {
-        'by-type': string;
-      };
+  };
+  students: {
+    key: number;
+    value: {
+      id?: number;
+      firstName: string;
+      lastName: string;
+      programId?: number;
+      startDate: Date;
+      programme: Program[];
     };
-  }
+    indexes: {
+      'by-program': number;
+    };
+  };
+  machines: {
+    key: number;
+    value: {
+      id?: number;
+      type: string;
+      baseDuration: number;
+      colorCode: string;
+    };
+    indexes: {
+      'by-type': string;
+    };
+  };
+}
