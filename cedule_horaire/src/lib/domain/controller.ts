@@ -28,7 +28,6 @@ export class Controller {
         this.idbManager.addStudent(
             student
         )
-        console.log("ok");
     }
 
     async getAllEtudiants() {
@@ -38,5 +37,21 @@ export class Controller {
     async getAllProgrammes() {
         return await this.idbManager.getAllProgrammes();
     }
+
+    async getProgrammeById(id: number) {
+        return await this.idbManager.getProgramById(id);
+    }
+
+    async getMachines() {
+        return await this.idbManager.getMachines();
+    }
+
+    async addProgramme(programme:  Omit<DatabaseSchema["programs"]["value"], "id">) {
+        this.idbManager.addProgram(
+            programme
+        )
+    }
+
+
 
 }

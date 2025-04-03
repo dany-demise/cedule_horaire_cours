@@ -11,13 +11,14 @@ export interface DatabaseSchema extends DBSchema {
       id?: number;
       name: string;
       machineSequence: {
-        machine: Machine;
+        machine: DatabaseSchema['machines']['value'];
         durationWeeks: number;  // Duration specific to this program-machine pairing
       }[];
       programType: ProgramType;
     };
     indexes: {
       'by-name': string;
+      'by-id': number;
     };
   };
   students: {
@@ -28,7 +29,6 @@ export interface DatabaseSchema extends DBSchema {
       lastName: string;
       programId?: number;
       startDate: Date;
-      programme: Program[];
     };
     indexes: {
       'by-program': number;
@@ -39,7 +39,6 @@ export interface DatabaseSchema extends DBSchema {
     value: {
       id?: number;
       type: string;
-      baseDuration: number;
       colorCode: string;
     };
     indexes: {

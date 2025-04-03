@@ -25,15 +25,16 @@
 		if (tbody && students) {
 			tbody.innerHTML = ''; // Clear existing rows
 
-			students.forEach((student) => {
+			students.forEach(async (student) => {
 				const row = document.createElement('tr');
-				let programs = '';
-				for (let p of student.programme) { programs += p.name }
+				console.log(student)
+				const programme = student.programId ? await controller.getProgrammeById(student.programId) : null ;
+				const programmeName = programme ? programme.name : 'Aucun' ;
 				row.innerHTML = `
 					<td>${student.id}</td>
 					<td>${student.firstName}</td>
 					<td>${student.lastName}</td>
-					<td>${programs}</td>
+					<td>${programmeName}</td>
 					<td>${student.startDate}</td>
 				`;
 				tbody.appendChild(row);

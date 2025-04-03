@@ -51,13 +51,13 @@ export class IndexedDBManager {
 
     // Initial program data (without ID)
     const initialProgramData: Omit<DatabaseSchema["programs"]["value"], "id"> = {
-      name: '5-Machine 13-Week Program',
+      name: '1-Machine 5-Week Program',
       machineSequence: [
-        { machine: { type: 'Pelle', weeks: 4, order: 1 }, durationWeeks: 3 },
-        { machine: { type: 'Pépine', weeks: 3, order: 2 }, durationWeeks: 3 },
-        { machine: { type: 'Bull', weeks: 3, order: 3 }, durationWeeks: 3 },
-        { machine: { type: 'Niveleuse', weeks: 2, order: 4 }, durationWeeks: 3 },
-        { machine: { type: 'Loader', weeks: 1, order: 5 }, durationWeeks: 3 }
+        { machine: { type: 'Pelle', colorCode: "#fafafa" }, durationWeeks: 3 },
+        { machine: { type: 'Pépine', colorCode: "#fafafa" }, durationWeeks: 3 },
+        { machine: { type: 'Bull', colorCode: "#fafafa" }, durationWeeks: 3 },
+        { machine: { type: 'Niveleuse', colorCode: "#fafafa" }, durationWeeks: 3 },
+        { machine: { type: 'Loader', colorCode: "#fafafa" }, durationWeeks: 3 }
       ],
       programType: ProgramType.LONG
     };
@@ -67,27 +67,27 @@ export class IndexedDBManager {
       {
         firstName: 'John',
         lastName: 'Doe',
-        startDate: new Date('2023-01-15')
+        startDate: new Date('2023-01-15'),
       },
       {
         firstName: 'Jane',
         lastName: 'Smith',
-        startDate: new Date('2023-02-01')
+        startDate: new Date('2023-02-01'),
       },
       {
         firstName: 'Robert',
         lastName: 'Johnson',
-        startDate: new Date('2023-03-10')
+        startDate: new Date('2023-03-10'),
       },
       {
         firstName: 'Emily',
         lastName: 'Williams',
-        startDate: new Date('2023-01-30')
+        startDate: new Date('2023-01-30'),
       },
       {
         firstName: 'Michael',
         lastName: 'Brown',
-        startDate: new Date('2023-02-15')
+        startDate: new Date('2023-02-15'),
       }
     ];
 
@@ -99,25 +99,16 @@ export class IndexedDBManager {
 
     // Add program and get its ID
     const programId = await tx.objectStore('programs').add(initialProgramData);
-
+    console.log(programId);
     // Get the full program with ID to add to students
     const program = await tx.objectStore('programs').get(programId);
     if (!program) throw new Error('Failed to create program');
-
-    // Prepare the single program for students
-    const studentProgram: Program = {
-      // id: program.id!,
-      name: program.name,
-      programType: program.programType,
-      machineSequence: program.machineSequence
-    };
 
     // Add students with the single program in their programme array
     const studentPromises = initialStudents.map(student =>
       tx.objectStore('students').add({
         ...student,
-        programme: [studentProgram], // Exactly one program in the array
-        programId: program.id // Reference to the same program
+        programId: programId ? programId : undefined
       })
     );
 
@@ -132,6 +123,13 @@ export class IndexedDBManager {
 
   async getProgramByName(name: string) {
     return this.db!.getFromIndex('programs', 'by-name', name);
+  }
+
+  async getProgramById(id: number): Promise<DatabaseSchema['programs']['value'] | null> {
+    console.log(id);
+    const programme = await this.db!.get('programs', id);
+    console.log(programme)
+    return programme ? programme : null;
   }
 
   // Student operations
@@ -160,6 +158,25 @@ export class IndexedDBManager {
   // Machine operations
   async getMachineByType(type: string) {
     return this.db!.getAllFromIndex('machines', 'by-type', type);
+  }
+
+  // Machine operations
+  async getMachines(): Promise<DatabaseSchema['machines']['value'][]> {
+    return this.db!.getAll('machines');
+  }
+
+  async deleteMachine(id: number) {
+    return this.db!.delete('machines', id);
+  }
+
+  // Program operations
+  async deleteProgram(id: number) {
+    return this.db!.delete('programs', id);
+  }
+
+  // Student operations
+  async deleteStudent(id: number) {
+    return this.db!.delete('students', id);
   }
 
   // Student operations

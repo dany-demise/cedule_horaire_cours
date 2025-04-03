@@ -1,4 +1,4 @@
 export enum ProgramType {
-    LONG = 0,
-    COURT = 1
+    LONG = "Long",
+    COURT = "Court"
 }

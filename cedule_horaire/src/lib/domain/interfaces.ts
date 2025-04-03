@@ -17,3 +17,4 @@ export interface Program {
   programType: ProgramType,
   machineSequence: {machine: Machine, durationWeeks:number}[]
 }
+

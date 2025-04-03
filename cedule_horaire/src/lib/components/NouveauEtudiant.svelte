@@ -1,31 +1,34 @@
 <script lang="ts">
-	import { Controller } from "$lib/domain/controller";
-	import { onMount } from "svelte";
-  import ListerEtudiants from "$lib/components/ListerEtudiants.svelte";
+	import { Controller } from '$lib/domain/controller';
+	import { onMount } from 'svelte';
+	import ListerEtudiants from '$lib/components/ListerEtudiants.svelte';
+	import type { DatabaseSchema } from '$lib/domain/db/db-schema';
 
-  let controller:Controller;
+	let controller: Controller;
+	let programmes: DatabaseSchema['programs']['value'][] = [];
 
-  onMount(() => {
-    controller = Controller.getInstance();
-  });
+	onMount(async () => {
+		controller = Controller.getInstance();
+		programmes = await controller.getAllProgrammes();
+	});
 
 	function addEtudiant() {
 		const etudiantForm = getEtudiantForm();
-    controller.nouveauEtudiant(etudiantForm);
-    // Retourner a ListerEtudiants
-    const switchFunc = controller.globalStore.get("SWITCH_COMPONENT")
-    if (switchFunc) {
-      switchFunc(ListerEtudiants);
-    }
+		controller.nouveauEtudiant(etudiantForm);
+		// Retourner a ListerEtudiants
+		const switchFunc = controller.globalStore.get('SWITCH_COMPONENT');
+		if (switchFunc) {
+			switchFunc(ListerEtudiants);
+		}
 	}
 
-	function getEtudiantForm() {
+	function getEtudiantForm(): Omit<DatabaseSchema["students"]["value"], "id"> {
 		const form = document.getElementById('new-student-form') as HTMLFormElement;
 		return {
 			firstName: form.firstName.value,
 			lastName: form.lastName.value,
 			startDate: form.startDate.value,
-			programme: form.programId.value
+			programId: parseInt(form.programId.value)
 		};
 	}
 </script>
@@ -55,7 +58,9 @@
 					<label for="program" class="form-label">Programme</label>
 					<select id="program" name="programId" class="custom-select">
 						<option value="">No program</option>
-						<!-- Program options would go here -->
+						{#each programmes as programme}
+							<option value="{programme.id}">{programme.name} ({programme.programType})</option>
+						{/each}
 					</select>
 				</div>
 
