@@ -42,22 +42,22 @@ export class IndexedDBManager {
   private async seedInitialData() {
     // Initial machines
     const initialMachines = [
-      { type: 'Loader', baseDuration: 1, colorCode: '#FF5733' },
-      { type: 'Pelle', baseDuration: 2, colorCode: '#33FF57' },
-      { type: 'Pépine', baseDuration: 2, colorCode: '#3357FF' },
-      { type: 'Bull', baseDuration: 2, colorCode: '#F333FF' },
-      { type: 'Niveleuse', baseDuration: 2, colorCode: '#FF33F3' }
+      { name: 'Loader 1', type: 'Loader', baseDuration: 1, rented: false, colorCode: '#FF5733' },
+      { name: 'Pelle 1', type: 'Pelle', baseDuration: 2, rented: false, colorCode: '#33FF57' },
+      { name: 'Pépine 1', type: 'Pépine', baseDuration: 2, rented: true, colorCode: '#3357FF' },
+      { name: 'Bull 1', type: 'Bull', baseDuration: 2, rented: true, colorCode: '#F333FF' },
+      { name: 'Niveleuse 1', type: 'Niveleuse', baseDuration: 2, rented: true, colorCode: '#FF33F3' }
     ];
 
     // Initial program data (without ID)
     const initialProgramData: Omit<DatabaseSchema["programs"]["value"], "id"> = {
       name: '1-Machine 5-Week Program',
       machineSequence: [
-        { machine: { type: 'Pelle', colorCode: "#fafafa" }, durationWeeks: 3 },
-        { machine: { type: 'Pépine', colorCode: "#fafafa" }, durationWeeks: 3 },
-        { machine: { type: 'Bull', colorCode: "#fafafa" }, durationWeeks: 3 },
-        { machine: { type: 'Niveleuse', colorCode: "#fafafa" }, durationWeeks: 3 },
-        { machine: { type: 'Loader', colorCode: "#fafafa" }, durationWeeks: 3 }
+        { machine: { name: 'Pelle 1', type: 'Pelle', colorCode: "#fafafa", rented: false }, durationWeeks: 3 },
+        { machine: { name: 'Pépine 1', type: 'Pépine', colorCode: "#fafafa", rented: false }, durationWeeks: 3 },
+        { machine: { name: 'Bull 1', type: 'Bull', colorCode: "#fafafa", rented: false }, durationWeeks: 3 },
+        { machine: { name: 'Niveleuse 1', type: 'Niveleuse', colorCode: "#fafafa", rented: true }, durationWeeks: 3 },
+        { machine: { name: 'Loader 1', type: 'Loader', colorCode: "#fafafa", rented: true }, durationWeeks: 3 }
       ],
       programType: ProgramType.LONG
     };

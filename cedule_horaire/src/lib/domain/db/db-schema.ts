@@ -38,7 +38,9 @@ export interface DatabaseSchema extends DBSchema {
     key: number;
     value: {
       id?: number;
+      name: string,
       type: string;
+      rented: boolean;
       colorCode: string;
     };
     indexes: {
